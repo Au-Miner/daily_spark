@@ -19,7 +19,7 @@ class GroupProducer {
         for (tmp <- msg) {
             res += tmp.toString + " "
         }
-        producer.send(new ProducerRecord[String, String]("second", res))
+        producer.send(new ProducerRecord[String, String]("groupExpChangeKafka", res))
         
         
         producer.close()

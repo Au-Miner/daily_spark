@@ -12,9 +12,9 @@ object GroupExpConsumer {
     private val groupProducer = new GroupProducer
     
     def main(args: Array[String]): Unit = {
-        val sparkConf = new SparkConf().setMaster("local[*]").setAppName("SparkStreaming")
+        val sparkConf = new SparkConf().setMaster("local[*]").setAppName("groupExp").set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
         val ssc = new StreamingContext(sparkConf, Seconds(10))
-        ssc.checkpoint("cp")
+        ssc.checkpoint("cp1")
 
         val kafkaPara: Map[String, Object] = Map[String, Object](
             ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG -> "192.168.224.102:9092,192.168.224.103:9092",
@@ -22,12 +22,13 @@ object GroupExpConsumer {
             "key.deserializer" -> "org.apache.kafka.common.serialization.StringDeserializer",
             "value.deserializer" -> "org.apache.kafka.common.serialization.StringDeserializer"
         )
-
+        
         val kafkaDataDS: InputDStream[ConsumerRecord[String, String]] = KafkaUtils.createDirectStream[String, String](
             ssc,
             LocationStrategies.PreferConsistent,
-            ConsumerStrategies.Subscribe[String, String](Set("first"), kafkaPara)
+            ConsumerStrategies.Subscribe[String, String](Set("userDoGroupJobKafka"), kafkaPara)
         )
+        // kafkaDataDS.print()
         val kafkaDataDS1 = kafkaDataDS.map(
             kafkaData => {
                 val data = kafkaData.value()
@@ -41,7 +42,6 @@ object GroupExpConsumer {
             }
         )
         solve2(kafkaDataDS1)
-        
         
         ssc.start()
         ssc.awaitTermination()
@@ -64,12 +64,15 @@ object GroupExpConsumer {
         ).reduceByKeyAndWindow(
             (x: Int, y: Int) => {x + y},
             (x: Int, y: Int) => {x - y},
-            Seconds(86400), Seconds(60)
+            Seconds(86400), Seconds(20)
         )
+        // DS2.print()
         DS2.foreachRDD(
             rdd => {
                 val tuples = rdd.sortBy(_._2, false).take(10)
                 val ints = tuples.map(_._1)
+                // ints.foreach(print)
+                // println()
                 groupProducer.send(ints);
             }
         )
