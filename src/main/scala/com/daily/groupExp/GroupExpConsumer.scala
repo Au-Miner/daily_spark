@@ -12,12 +12,13 @@ object GroupExpConsumer {
     private val groupProducer = new GroupProducer
     
     def main(args: Array[String]): Unit = {
-        val sparkConf = new SparkConf().setMaster("local[*]").setAppName("groupExp").set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
+        val sparkConf = new SparkConf().setMaster("yarn").setAppName("groupExp").set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
         val ssc = new StreamingContext(sparkConf, Seconds(10))
         ssc.checkpoint("cp1")
 
         val kafkaPara: Map[String, Object] = Map[String, Object](
-            ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG -> "192.168.224.102:9092,192.168.224.103:9092",
+            ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG -> "10.10.43.145:9092,10.10.43.65:9092,10.10.43.20:9092",
+            // ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG -> "192.168.224.102:9092,192.168.224.103:9092",
             ConsumerConfig.GROUP_ID_CONFIG -> "daily",
             "key.deserializer" -> "org.apache.kafka.common.serialization.StringDeserializer",
             "value.deserializer" -> "org.apache.kafka.common.serialization.StringDeserializer"

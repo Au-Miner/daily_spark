@@ -9,7 +9,8 @@ import scala.collection.mutable.ArrayBuffer
 class GroupProducer {
     def send(msg: Array[Int]): Unit = {
         val properties = new Properties()
-        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.224.102:9092,192.168.224.103:9092")
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "10.10.43.145:9092,10.10.43.65:9092,10.10.43.20:9092")
+        // properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.224.102:9092,192.168.224.103:9092")
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, classOf[StringSerializer])
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, classOf[StringSerializer])
         

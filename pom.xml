@@ -84,6 +84,7 @@
                     <execution>
                         <!-- 声明绑定到 maven 的 compile 阶段 -->
                         <goals>
+                            <goal>compile</goal>
                             <goal>testCompile</goal>
                         </goals>
                     </execution>
